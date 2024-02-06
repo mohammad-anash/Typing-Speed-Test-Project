@@ -21,6 +21,7 @@ function createOptions(n) {
   for (let i = 1; i <= n; i++) {
     const options = document.createElement("option");
     options.textContent = `${i * 5}000`;
+    options.value = `${i * 5}000`;
     selection.appendChild(options);
   }
 }
@@ -65,27 +66,19 @@ function createAndAppend(ele, attType, attName, appendWith, event, cols, rows) {
   if (event === "keyup") {
     const selectTextArea = document.querySelector(".textarea");
     selectTextArea.addEventListener(event, getText);
-    // selectTextArea.addEventListener(event, countWordsAndLetters);
   }
 
   return element;
 }
 
-function countWordsAndLetters() {
-  const text = textArea.value;
-
-  const words = text.split(" ").length;
-  const letter = text.replaceAll(" ", "").length;
-
-  return (result.innerText = `You Write ${words} Words And ${letter} Letters in 10000 mili second`);
-}
-
-function getSomeTime(time) {
-  // const time = Number(e.target.value);
+let currentTime;
+function getSomeTime(e) {
+  const timer = Number(e.target.value);
+  currentTime = timer;
   setTimeout(() => {
     textArea.disabled = true;
     countWordsAndLetters();
-  }, time);
+  }, timer);
   textArea.disabled = false;
 }
 
@@ -98,7 +91,24 @@ function getText() {
     .split("")
     .some((char) => char.includes(firstLetter));
 
-  if (checkLetter) {
-    getSomeTime(10000);
-  }
+  const selectoptions = Array.from(document.querySelectorAll("select option"));
+
+  selectoptions.forEach((options) => {
+    options.addEventListener("change", function (e) {
+      const time = e.target.value;
+      console.log(time);
+      if (checkLetter) {
+        getSomeTime(time);
+      }
+    });
+  });
+}
+
+function countWordsAndLetters() {
+  const text = textArea.value;
+
+  const words = text.split(" ").length;
+  const letter = text.replaceAll(" ", "").length;
+
+  return (result.innerText = `You Write ${words} Words And ${letter} Letters in ${currentTime} mili second`);
 }
